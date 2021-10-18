@@ -1,0 +1,67 @@
+name: 'Build Container Image'
+description: 'Build and Push to Registry'
+inputs:
+  registry_name:
+    description: 'Container registry'
+    default: 'ghcr.io'
+    required: true
+  registry_username:
+    description: 'Username for container registry'
+    required: true
+  registry_password:
+    description: 'Password for container registry'
+    required: true
+  context:
+    description: 'Docker build context'
+    required: true
+    default: '.'
+  dockerfile:
+    description: 'Dockerfile name'
+    required: true
+    default: 'Dockerfile'
+  image_name:
+    description: 'Name of image to working with'
+    required: true
+  image_tag:
+    description: 'Tag of image to working with. Default: latest'
+    required: true
+    default: 'latest'
+  runs:
+    using: "composite"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{inputs.registry_name}}
+          username: ${{inputs.registry_username}}
+          password: ${{inputs.registry_password}}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{inputs.context}}
+          push: true
+          tags: ${{inputs.image_name}}:${{inputs.image_tag}}
+          file: ${{inputs.dockerfile}}
+          secrets: |
+            GIT_AUTH_TOKEN=${{inputs.registry_password}}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.build-cache
+          mv /tmp/.build-cache-new /tmp/.buildx-cache
