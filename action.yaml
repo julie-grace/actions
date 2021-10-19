@@ -56,8 +56,8 @@ runs:
         file: ${{inputs.dockerfile}}
         secrets: |
           GIT_AUTH_TOKEN=${{inputs.registry_password}}
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+        cache-from: type=registry,src=/tmp/.buildx-cache
+        cache-to: type=registry,dest=/tmp/.buildx-cache-new,mode=max
     - name: Move cache
       shell: bash
       # Temp fix
