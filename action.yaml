@@ -26,6 +26,10 @@ inputs:
     description: 'Tag of image to working with. Default: latest'
     required: true
     default: 'latest'
+  target:
+    description: 'Multistage docker target'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -60,6 +64,7 @@ runs:
         cache-from: type=registry,ref=${{inputs.image_name}}:buildcache
 #        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
         cache-to: type=registry,mode=max,ref=${{inputs.image_name}}:buildcache
+        target: ${{inputs.target}}
 #    - name: Move cache
 #      shell: bash
       # Temp fix
