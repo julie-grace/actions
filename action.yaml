@@ -1,6 +1,7 @@
 name: 'Build Container Image'
 description: 'Build and Push to Registry'
 inputs:
+# registry config
   registry_name:
     description: 'Container registry'
     default: 'ghcr.io'
@@ -11,6 +12,12 @@ inputs:
   registry_password:
     description: 'Password for container registry'
     required: true
+  push:
+    description: 'Push container image to registry ?'
+    required: false
+    default: 'true'
+# end
+# docker config
   context:
     description: 'Docker build context'
     required: true
@@ -30,6 +37,12 @@ inputs:
     description: 'Multistage docker target'
     required: false
     default: ''
+# end
+# composer config
+  composer_github_auth:
+    description: 'Github token to enable composer to install private packages'
+    required: false
+# end
 runs:
   using: "composite"
   steps:
@@ -55,11 +68,11 @@ runs:
       uses: docker/build-push-action@v2
       with:
         context: ${{inputs.context}}
-        push: true
+        push: ${{inputs.push}}
         tags: ${{inputs.image_name}}:${{inputs.image_tag}}
         file: ${{inputs.dockerfile}}
-        secrets: |
-          GIT_AUTH_TOKEN=${{inputs.registry_password}}
+        build-args: |
+          GITHUB_TOKEN=${{inputs.composer_github_auth}}
 #        cache-from: type=local,src=/tmp/.buildx-cache
         cache-from: type=registry,ref=${{inputs.image_name}}:buildcache
 #        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
