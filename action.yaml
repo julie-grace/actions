@@ -73,6 +73,6 @@ runs:
         file: ${{inputs.dockerfile}}
         build-args: |
           GITHUB_TOKEN=${{inputs.composer_github_auth}}
-        cache-from: type=registry,ref=${{inputs.image_name}}:buildcache
-        cache-to: type=registry,mode=max,ref=${{inputs.image_name}}:buildcache
+        cache-from: type=local
+        cache-to: type=local
         target: ${{inputs.target}}
