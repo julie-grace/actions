@@ -54,9 +54,9 @@ runs:
       uses: actions/cache@v2
       with:
         path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-key-${{inputs.image_name}}
+        key: ${{ runner.os }}-buildx-${{inputs.image_name}}
         restore-keys: |
-          ${{ runner.os }}-buildx-key-${{inputs.image_name}}
+          ${{ runner.os }}-buildx-${{inputs.image_name}}
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v1
       with:
@@ -73,6 +73,6 @@ runs:
         file: ${{inputs.dockerfile}}
         build-args: |
           GITHUB_TOKEN=${{inputs.composer_github_auth}}
-        cache-from: type=local,src=/tmp/.docker-cache/input-dir
-        cache-to: type=local,dest=/tmp/.docker-cache/output-dir
+        cache-from: type=registry,ref=${{inputs.image_name}}:buildcache
+        cache-to: type=registry,mode=max,ref=${{inputs.image_name}}:buildcache
         target: ${{inputs.target}}
