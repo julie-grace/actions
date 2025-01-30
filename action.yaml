@@ -59,6 +59,8 @@ runs:
         node-version: '14'
     - run: npm install
       shell: sh
+    - name: install Tabler - Manually
+      run: npm install @tabler/core@1.0.0-beta9
     - name: build static assets
       shell: sh
       run: |
