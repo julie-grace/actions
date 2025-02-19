@@ -34,12 +34,12 @@ The `action.yaml` file is a configuration for a GitHub Action aimed at building 
 
 ## Steps
 
-1. **Checkout**: Uses `actions/checkout@v2` to check out the source code from the repository.
+1. **Checkout**: Uses `actions/checkout@v4` to check out the source code from the repository.
 2. **Setup Node.js**: Uses `actions/setup-node@v2` to set up the Node.js environment version 14.
 3. **Install Dependencies**: Runs `npm install` to install the project's dependencies.
 4. **Build Static Assets**: Runs commands to build static assets, including copying the `.env.example` file to `.env` if needed, and running `npm run prod`.
 5. **Setup Docker Buildx**: Uses `docker/setup-buildx-action@v1` to set up Docker Buildx.
-6. **Cache Docker Layers**: Uses `actions/cache@v2` to cache Docker layers.
+6. **Cache Docker Layers**: Uses `actions/cache@v4` to cache Docker layers.
 7. **Login to Registry**: Uses `docker/login-action@v1` to log in to the container registry using the `registry_name`, `registry_username`, and `registry_password` inputs.
 8. **Build and Push**: Uses `docker/build-push-action@v2` to build and push the Docker image to the registry using the various inputs defined earlier.
 
