@@ -86,7 +86,7 @@ runs:
         password: ${{inputs.registry_password}}
     - name: Build and push
       id: docker_build
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v5
       with:
         context: ${{inputs.context}}
         push: ${{inputs.push}}
@@ -94,6 +94,7 @@ runs:
         file: ${{inputs.dockerfile}}
         build-args: |
           GITHUB_TOKEN=${{inputs.composer_github_auth}}
+          COMPOSER_GITHUB_TOKEN=${{inputs.composer_github_auth}}
         cache-from: type=registry,ref=${{inputs.image_name}}:buildcache
         cache-to: type=registry,mode=max,ref=${{inputs.image_name}}:buildcache
         target: ${{inputs.target}}
