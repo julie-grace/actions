@@ -62,6 +62,9 @@ runs:
     - name: install Tabler - Manually
       shell: sh
       run: npm install @tabler/core@1.0.0-beta9
+    - name: Install Webpack - Manually
+      shell: sh
+      run: npm install webpack@5.88.2 --save-dev
     - name: build static assets
       shell: sh
       run: |
