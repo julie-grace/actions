@@ -35,8 +35,8 @@ The `action.yaml` file is a configuration for a GitHub Action aimed at building 
 ## Steps
 
 1. **Checkout**: Uses `actions/checkout@v4` to check out the source code from the repository.
-2. **Setup Node.js**: Uses `actions/setup-node@v2` to set up the Node.js environment version 14.
-3. **Install Dependencies**: Runs `npm install` to install the project's dependencies.
+2. **Setup Node.js**: Uses `actions/setup-node@v6` to set up Node.js 24. When the repository commits a `package-lock.json`, the npm cache is enabled (`cache: npm`).
+3. **Install Dependencies**: Runs `npm ci` when `package-lock.json` exists, otherwise `npm install`.
 4. **Build Static Assets**: Runs commands to build static assets, including copying the `.env.example` file to `.env` if needed, and running `npm run prod`.
 5. **Setup Docker Buildx**: Uses `docker/setup-buildx-action@v1` to set up Docker Buildx.
 6. **Cache Docker Layers**: Uses `actions/cache@v4` to cache Docker layers.

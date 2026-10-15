@@ -63,14 +63,17 @@ runs:
     - uses: actions/setup-node@v6
       with:
         node-version: '24'
-    - run: npm install
+        # The npm cache is keyed on the lockfile, and setup-node fails when it
+        # cannot find one, so only enable it for repositories that commit one.
+        cache: ${{ hashFiles('package-lock.json') != '' && 'npm' || '' }}
+    - name: install node dependencies
       shell: sh
-    - name: install Tabler - Manually
-      shell: sh
-      run: npm install @tabler/core@1.0.0-beta9
-    - name: Install Webpack - Manually
-      shell: sh
-      run: npm install webpack@5.88.2 --save-dev
+      run: |
+        if [ -f package-lock.json ]; then
+          npm ci
+        else
+          npm install
+        fi
     - name: build static assets
       shell: sh
       run: |
