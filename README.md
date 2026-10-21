@@ -23,6 +23,7 @@ The `action.yaml` file is a configuration for a GitHub Action aimed at building 
 - **image_name**: The name of the image to be built.
 - **image_tag**: The tag of the image to be built. The default is `latest`.
 - **target**: The multistage Docker target to be used. The default is an empty string.
+- **cache_ref_suffix**: Suffix for the registry build cache ref: `prod` reads and writes `<image_name>:buildcache-prod`. Give each Dockerfile its own suffix, so builds of different Dockerfiles do not overwrite each other's layer cache. The default is an empty string, which keeps the shared `<image_name>:buildcache` ref.
 
 ### Composer Config
 
@@ -39,8 +40,7 @@ The `action.yaml` file is a configuration for a GitHub Action aimed at building 
 3. **Install Dependencies**: Runs `npm install` to install the project's dependencies.
 4. **Build Static Assets**: Runs commands to build static assets, including copying the `.env.example` file to `.env` if needed, and running `npm run prod`.
 5. **Setup Docker Buildx**: Uses `docker/setup-buildx-action@v1` to set up Docker Buildx.
-6. **Cache Docker Layers**: Uses `actions/cache@v4` to cache Docker layers.
-7. **Login to Registry**: Uses `docker/login-action@v1` to log in to the container registry using the `registry_name`, `registry_username`, and `registry_password` inputs.
-8. **Build and Push**: Uses `docker/build-push-action@v2` to build and push the Docker image to the registry using the various inputs defined earlier.
+6. **Login to Registry**: Uses `docker/login-action@v1` to log in to the container registry using the `registry_name`, `registry_username`, and `registry_password` inputs.
+7. **Build and Push**: Uses `docker/build-push-action@v6` to build and push the Docker image to the registry using the various inputs defined earlier. The layer cache lives in the registry (`cache-from` / `cache-to` with `type=registry`), under the ref described at `cache_ref_suffix`.
 
 Overall, the `action.yaml` file orchestrates a series of steps required to automatically build and push Docker images using GitHub Actions, facilitating the Continuous Integration and Continuous Deployment (CI/CD) process in our project.

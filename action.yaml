@@ -37,6 +37,14 @@ inputs:
     description: 'Multistage docker target'
     required: false
     default: ''
+  cache_ref_suffix:
+    description: >-
+      Suffix for the registry build cache ref, e.g. `prod` gives
+      <image_name>:buildcache-prod. Give each Dockerfile its own suffix so
+      builds of different Dockerfiles do not overwrite each other's cache.
+      Default: empty, which keeps the shared <image_name>:buildcache ref.
+    required: false
+    default: ''
   # end
   # composer config
   composer_github_auth:
@@ -80,13 +88,6 @@ runs:
         npm run prod
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-    - name: Cache Docker layers
-      uses: actions/cache@v5
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{inputs.image_name}}
-        restore-keys: |
-          ${{ runner.os }}-buildx-${{inputs.image_name}}
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
@@ -105,6 +106,6 @@ runs:
           GITHUB_TOKEN=${{inputs.composer_github_auth}}
           COMPOSER_GITHUB_TOKEN=${{inputs.composer_github_auth}}
           ${{inputs.build-args}}
-        cache-from: type=registry,ref=${{inputs.image_name}}:buildcache
-        cache-to: type=registry,mode=max,ref=${{inputs.image_name}}:buildcache
+        cache-from: type=registry,ref=${{inputs.image_name}}:buildcache${{ inputs.cache_ref_suffix != '' && format('-{0}', inputs.cache_ref_suffix) || '' }}
+        cache-to: type=registry,mode=max,ref=${{inputs.image_name}}:buildcache${{ inputs.cache_ref_suffix != '' && format('-{0}', inputs.cache_ref_suffix) || '' }}
         target: ${{inputs.target}}
